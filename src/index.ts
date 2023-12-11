@@ -27,7 +27,7 @@ async function main() {
         token: process.env.DISCORD_TOKEN || '',
         applicationId:  '1182968849872736347',
         prefix: process.env.PREFIX || '!',
-        owners: [],
+        owners: ['401844809385508903'],
         servers: [process.env.TESTING_SERVER || '']
     }
 
@@ -41,9 +41,10 @@ async function main() {
 
     const handlerFolder = fs.readdirSync(join(__dirname, 'handler')).filter(file => file.endsWith('.ts') || file.endsWith('.js'))
     for (const handler of handlerFolder) {
-        console.log(`Loading ${handler} handler`)
+        const name = handler.split('.')[0]
+        console.log(`Loading ${name} handler`)
         await loadHandler(handler, client)
-        console.log(`Loaded ${handler} handler`)
+        console.log(`Loaded ${name} handler`)
     }
 
     client.bot.login(client.config.token)

@@ -12,7 +12,8 @@ export default (client: IClient) => {
             }
 
             try {
-                await cmd.autocomplete!(client, interaction)
+                const map = await cmd.autocomplete!(client, interaction)
+                await interaction.respond(map)
             } catch(e) {
                 console.error(e)
             }
@@ -33,9 +34,5 @@ export default (client: IClient) => {
                 await interaction.reply(execution)
             }
         }
-
-
-
-
     })
 }

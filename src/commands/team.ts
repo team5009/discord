@@ -1,5 +1,5 @@
-import { TOA } from "@lib";
-import {  } from "axios";
+import { First, FirstApiKey } from "@lib";
+import axios from "axios";
 import { Command } from "types";
 
 export default {
@@ -18,16 +18,25 @@ export default {
     autocomplete: async (client, interaction) => {
         const focusedOption = interaction.options.getFocused(true)
         if (focusedOption.name !== 'number') return
-        
+        const num = parseInt(focusedOption.value) || undefined
+        const list = await getTeamList(num)
 
-        if (focusedOption.value === '') {
-            console.log(await getTeamList())
+        let options = list.map(team => {
+            return {
+                name: `${team.teamNumber} | ${team.nameShort}`,
+                value: team.teamNumber.toString()
+            }
+        })
+
+        if (options.length > 25) {
+            options = options.slice(0, 25)
         }
 
-
+        return options
     },
     execute: async (client, interaction, message, args) => {
         if (interaction != undefined) {
+
             await interaction.reply({content: 'This command is not yet available in slash commands', ephemeral: true})
             return
         }
@@ -38,7 +47,29 @@ export default {
     }
 } as Command
 
-async function getTeamList() {
-    const { data } = await TOA.get('https://theorangealliance.org/api/team/list')
-    return data
+async function getTeamList(teamNum?: number | undefined) {
+    if (teamNum != undefined) {
+        try {
+            const res = await axios.get('https://ftc-api.firstinspires.org/v2.0/2023/teams', {
+                headers: {
+                    'Authorization': `Basic ${FirstApiKey}`
+                },
+                params: {
+                    teamNumber: teamNum
+                }
+            })
+        
+            return res.data.teams as any[]
+        } catch {
+            return []
+        }
+    } else {
+        const res = await axios.get('https://ftc-api.firstinspires.org/v2.0/2023/teams', {
+            headers: {
+                'Authorization': `Basic ${FirstApiKey}`
+            }
+        })
+    
+        return res.data.teams as any[]
+    }
 }

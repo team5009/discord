@@ -8,7 +8,7 @@ export interface Command {
     legacy?: boolean | "both";
     cooldown?: number;
     dev?: boolean;
-    autocomplete?: (client: IClient, interaction: AutocompleteInteraction) => Promise<void>;
+    autocomplete?: (client: IClient, interaction: AutocompleteInteraction) => Promise<{name: string, value: string}[]>;
     execute: (client: IClient, interaction?: ChatInputCommandInteraction, message?: Message, args?: string[]) => Promise<void | MessageReplyOptions | InteractionReplyOptions>;
 }
 
